@@ -8,13 +8,13 @@ Every source file in `eph` or `fun` folder has documentation string and simple e
 ## Calibration phase
 <p align="center">
   <img src="img/example_cal_all-sats.png" width="800"/>
-  Example of calibration for data acquired in low-multipath environment
+  <br>Example of calibration for data acquired in low-multipath environment</br>
 </p>
 
 ## Detection phase
 <p align="center">
   <img src="img/example_detection_G03.png" width="800"/>
-  Example of multipath detection using SNR detector
+  <br>Example of multipath detection using SNR detector</br>
 </p>
 
 # References
