@@ -23,20 +23,6 @@ function pos = getSatPosGLO(GLOtime,eph)
 % Peter Spanik, 18.5.2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% close all
-% clear
-% clc
-% 
-% navData = getBroadcastData('R',[2018 4 26; 2018 4 27]);
-% %GPSsow = 430201-900:1:432000+900;
-% GPSsow = 4*86400+23*3600+59*60+50:1:5*86400+0+0+10;
-% GLOtime = [1998*ones(size((GPSsow)')), (GPSsow)'];
-% 
-% 
-% PRN = 7;
-% idxEph = find(PRN == navData.sat);
-% eph = navData.eph{idxEph}(:,48);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize output
 pos = zeros(3,size(GLOtime,1));
@@ -176,16 +162,3 @@ for processingParts = 1:2
     pos(:,selDirections(:,processingParts)) = int_val(:,outIdx);
     
 end
-
-%%
-
-% figure
-% mTime = gps2matlabtime(GLOtime);
-% plot(mTime,pos(1,:),'-r')
-% hold on
-% grid on
-% mTimeEph = gps2matlabtime(navData.eph{1,6}(7:8,47:49)');
-% plot(mTimeEph,navData.eph{1,6}(15,47:49)*1000,'-bo')
-% 
-% datetick('x','HH:MM')
-
