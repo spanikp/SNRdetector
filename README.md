@@ -6,6 +6,10 @@ To start the program just run `processDetection.m` script from MATLAB command pr
 Every source file in `eph` or `fun` folder has documentation string and simple explanaition of its funcionality, so if you want to change something, you should be able to understand what's going on in particular function file.
 
 ## Calibration phase
+At this stage the user equipment should be placed in so called "low-multipath" environment, so no obstacles allowing signal to reflect from should be in the vicinity of antenna. The figure below represent the example (see attached file `obs/calibration/example_calibration.18o`) how calibration polynomial functions fitting SNR differences can looks like.
+
+Note: There is a branch of utility oscillating pattern in measured SNR values caleed *GNSS reflectometry* (for more details see e.g. (Larsonn et. al., 200X)). For this reason I would recommend to set the antenna height as it will be used in the real measurement campaign. 
+
 <p align="center">
   <img src="img/example_cal_all-sats.png" width="800"/>
   <br>Example of calibration for data acquired in low-multipath environment</br>
@@ -19,3 +23,5 @@ Every source file in `eph` or `fun` folder has documentation string and simple e
 
 # References
 Strode, Philip R. R. and Paul D. Groves. *GNSS Multipath Detection Using Three-Frequency Signal-to-Noise Measurements*. GPS Solutions 20, no. 3 (July 2016): 399–412. https://doi.org/10.1007/s10291-015-0449-1.
+
+http://xenon.colorado.edu/portal/index.php?action=publications

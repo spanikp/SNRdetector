@@ -59,6 +59,9 @@ try
     % Default method using Matlab mget function
     server = ftp(servername);    % Open FTP server
     cd(server, path);            % Change directory at FTP server
+    sf = struct(server);
+    sf.jobject.enterLocalPassiveMode();             %% This line is needed in my case due to the issue with passive Matlab connection (https://undocumentedmatlab.com/blog/solving-an-mput-ftp-hang-problem) 
+    
     mget(server,filename);       % Download file
     extracting = true;
 catch        
@@ -77,7 +80,8 @@ end
 % Extracting file
 if extracting
     fprintf('[extracting]\n');
-    unix(['gzip -d -f ', filename]);
+    % unix(['gzip -d -f ', filename]); % If gzip is installed
+    system(['7z e ', filename]);       % If 7z is installed
     
     % Rename navigation message of EC systems
     if contains('EC',satsys)
