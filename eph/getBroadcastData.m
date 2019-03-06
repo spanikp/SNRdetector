@@ -59,11 +59,14 @@ function brdc = getBroadcastData(satsys, time_frame)
 %              getNavigationHeader.m
 %              mergeBroadcastMessages.m
 %
-% Peter Spanik, 9.5.2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Extent input time_frame by one day
+t = datetime(time_frame) + [-day(1); day(1)];
+time_frame = datevec(t);
+time_frame = time_frame(:,1:6);
+
 % Time conversions
-time_frame = [time_frame, zeros(2,3)];
 mTime      = datenum(time_frame(1,:)):1:datenum(time_frame(2,:));
 dt         = datetime(mTime,'ConvertFrom','datenum');
 doy        = day(dt,'DayOfYear');
