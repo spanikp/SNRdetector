@@ -1,26 +1,32 @@
-function obsData = loadObsFile(filepath)
+function obsData = loadObsFile(filepath,saving)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function to load observation data in Matlab MAT or text RINEX format.
 %
 % Peter Spanik, 17.5.2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set defaults
+if nargin == 1
+   saving = true; 
+end
 
 % Split the filename and extract extension
-splitted = strsplit(filepath,{'.','/','\'});
-filename = splitted{end-1};
-ext = splitted{end};
+[splitted,filename,ext] = fileparts(filepath);
 
 % Decide if load Matlab MAT file or text RINEX file
-if strcmpi(ext,'mat')
+if strcmpi(ext,'.mat')
     obsData = load(filepath);
     obsData = obsData.obsData;
+    fprintf('MAT file "%s" loaded.\n',filepath);
     
-elseif regexp(lower(ext),'[0-9][0-9][oO]')
+elseif regexp(lower(ext),'.[0-9][0-9][oO]')
     obsData = loadRINEXObservation(filepath);
     obsData = getBroadcastPosition(obsData);
-
+    fprintf('RINEX file "%s" loaded.\n',filepath);
+    
     % Save loaded file as MAT file
-    outMatFileName = [strjoin(splitted(1:end-1),'/'), '.mat'];
-    fprintf('\nSaving RINEX observation "%s.%s" to "%s.mat" in the same folder.\n',filename,ext,filename);
-    save(outMatFileName,'obsData');
+    if saving
+        outMatFileName = fullfile(splitted,[filename '.mat']);
+        fprintf('\nSaving MAT file to "%s"\n',outMatFileName);
+        save(outMatFileName,'obsData');
+    end
 end

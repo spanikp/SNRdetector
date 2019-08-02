@@ -1,4 +1,4 @@
-function downloadBroadcastMessage(satsys, mTime, folderPath)
+function downloadBroadcastMessage(satsys, mTime, folderPath,extract)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function to download navigation message of GPS, GLONASS, GALILEO or
 % BEIDOU navigation system. There are used different archives to download
@@ -9,6 +9,7 @@ function downloadBroadcastMessage(satsys, mTime, folderPath)
 % Input: satsys - character defining GNSS ('GREC')
 %        mTime - Matlab datenum date (not vector)
 %        folderPath - path to folder where files should be stored
+%        extract - true/false switch if the data should be unzipped by 7z
 %
 % Output: downloaded and extracted files
 %
@@ -16,6 +17,11 @@ function downloadBroadcastMessage(satsys, mTime, folderPath)
 %
 % Peter Spanik, 9.5.2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Get defaults
+if nargin == 3
+	extract = true;
+end
 
 % Change directory to destination folder
 currentFolder = pwd();
@@ -54,7 +60,6 @@ end
 
 % Downloading file
 fprintf(' -> %s [downloading]', filename);
-extracting = false;
 try 
     % Default method using Matlab mget function
     server = ftp(servername);    % Open FTP server
@@ -63,36 +68,40 @@ try
     sf.jobject.enterLocalPassiveMode();             %% This line is needed in my case due to the issue with passive Matlab connection (https://undocumentedmatlab.com/blog/solving-an-mput-ftp-hang-problem) 
     
     mget(server,filename);       % Download file
-    extracting = true;
 catch        
     fprintf('\nWarning:          Matlab mget method for file %s failed.\n', filename);
     try
         % Alternative method using Matlab websave function
         link = ['ftp://', servername, '/', path, '/', filename];
         websave(link, name);
-        extracting = true;
     catch        
         fprintf('Warning:          Matlab urlwrite method for file %s failed.\n', filename);
         error('Error:            File %s not downloaded!\n', filename);
     end
 end
 
-% Extracting file
-if extracting
-    fprintf('[extracting]\n');
-    % unix(['gzip -d -f ', filename]); % If gzip is installed
-    system(['7z e ', filename]);       % If 7z is installed
-    
-    % Rename navigation message of EC systems
-    if contains('EC',satsys)
-        if satsys == 'E'
-            filenamev2 = ['brdc', doy, '0.', yy, 'l'];
-        else
-            filenamev2 = ['brdc', doy, '0.', yy, 'c'];
+% extract file
+if extract
+	[status, cmdout] = system('7z --help');
+	if ~isempty(strfind(cmdout,'not recognized as an internal or external command'))
+		cd(currentFolder);
+		error('\n7-Zip application not found!\nPlease install before continue or provide unzipped navigation messages.\nLink to download: https://www.7-zip.org/download.html');
+	else
+        fprintf('[extract]\n');
+        % unix(['gzip -d -f ', filename]); % If gzip is installed
+        system(['7z e ', filename]);       % If 7z is installed
+        
+        % Rename navigation message of EC systems
+        if contains('EC',satsys)
+            if satsys == 'E'
+                filenamev2 = ['brdc', doy, '0.', yy, 'l'];
+            else
+                filenamev2 = ['brdc', doy, '0.', yy, 'c'];
+            end
+            fprintf('Renaming file:    %s -> %s\n', filename(1:end-3), filenamev2);
+            movefile(filename(1:end-3),filenamev2);
         end
-        fprintf('Renaming file:    %s -> %s\n', filename(1:end-3), filenamev2);
-        movefile(filename(1:end-3),filenamev2);
-    end
+	end
 end
 
 cd(currentFolder);
